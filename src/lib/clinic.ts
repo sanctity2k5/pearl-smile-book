@@ -4,7 +4,7 @@ export const CLINIC = {
   name: "PearlSmile Dental",
   city: "Lagos, Nigeria",
   address: "Plot 1242 Adetokunbo Ademola Street, Victoria Island, Lagos",
-  phone: "+234 812 345 6789",
+  phone: "+234 811 951 5005",
   landline: "+234 1 293 8470",
   email: "concierge@pearlsmile-dental.com",
   hours: "Mon–Sat · 9:00 AM – 6:00 PM",

@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Check, ChevronLeft, ChevronRight, LockKeyhole, MapPin, Zap } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight, LockKeyhole, MapPin, Phone, Zap } from "lucide-react";
 import { useState } from "react";
 import {
   CLINIC,
@@ -27,14 +27,14 @@ export function Logo({ sub }: { sub?: string }) {
 
 export function SiteHeader() {
   return (
-    <header className="border-b bg-card/95">
+    <header className="border-b border-primary/30 bg-primary text-primary-foreground">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-5">
-        <Logo />
-        <span className="hidden rounded-full bg-secondary px-3 py-1.5 text-xs font-medium text-primary lg:inline-flex">● &nbsp; Direct Line / WhatsApp: &nbsp; {CLINIC.phone}</span>
+        <span className="rounded-lg bg-card px-3 py-1.5 shadow-sm"><Logo /></span>
+        <span className="hidden items-center gap-2 rounded-full bg-primary-foreground/10 px-3.5 py-1.5 text-xs font-medium text-primary-foreground/90 lg:inline-flex"><Phone className="size-3.5 text-gold" /> Direct Line: &nbsp;{CLINIC.phone}</span>
         <nav className="flex items-center gap-2 sm:gap-5 text-sm">
-          <Link to="/book" className="btn-primary !px-3 !py-2 sm:!px-5">Book Appointment</Link>
-          <Link to="/manage" className="hidden font-medium hover:text-primary md:block">Manage Booking</Link>
-          <Link to="/portal/login" className="hidden items-center gap-1.5 text-xs text-muted-foreground hover:text-primary lg:flex"><LockKeyhole className="size-3.5" />Owner Portal</Link>
+          <Link to="/book" className="rounded-md bg-gold px-3 py-2 font-semibold text-primary shadow-sm transition-colors hover:bg-gold/85 sm:px-5">Book Appointment</Link>
+          <Link to="/manage" className="hidden font-medium text-primary-foreground/85 transition-colors hover:text-gold md:block">Manage Booking</Link>
+          <Link to="/portal/login" className="hidden items-center gap-1.5 text-xs text-primary-foreground/70 transition-colors hover:text-gold lg:flex"><LockKeyhole className="size-3.5" />Owner Portal</Link>
         </nav>
       </div>
     </header>
