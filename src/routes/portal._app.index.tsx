@@ -60,7 +60,7 @@ function Dashboard() {
               const past = new Date(a.start) < now;
               return (
                 <li key={a.id}>
-                  <Link to="/portal/appointments/$id" params={{ id: a.id }} className="-mx-3 flex items-center gap-4 rounded-xl px-3 py-4 hover:bg-muted/60">
+                  <Link to="/portal/appointments/$id" params={{ id: a.id }} className="-mx-3 flex items-center gap-4 rounded-md px-3 py-4 hover:bg-muted/60">
                     <span className={`w-20 shrink-0 text-sm font-semibold ${past ? "text-muted-foreground" : ""}`}>{fmtTime(a.start)}</span>
                     <span className="min-w-0 flex-1">
                       <span className="block truncate font-medium">{a.name}</span>
@@ -83,13 +83,13 @@ function Dashboard() {
             ) : (
               <ul className="mt-4 space-y-4">
                 {attention.map((a) => (
-                  <li key={a.id} className="rounded-2xl bg-warn-soft p-4">
+                  <li key={a.id} className="rounded-lg bg-warn-soft p-4">
                     <Link to="/portal/appointments/$id" params={{ id: a.id }} className="font-semibold hover:underline">{a.name}</Link>
                     <p className="text-sm">Appointment today at {fmtTime(a.start)}</p>
                     <p className="mt-2 text-sm text-muted-foreground">"Reminder sent. Patient has not confirmed."</p>
                     <div className="mt-3 flex flex-wrap gap-2">
                       {sent[a.id] ? (
-                        <span className="inline-flex items-center gap-1.5 rounded-full bg-card px-3 py-2 text-sm font-medium text-primary"><Check className="size-4" /> Reminder sent</span>
+                        <span className="inline-flex items-center gap-1.5 rounded-md bg-card px-3 py-2 text-sm font-medium text-primary"><Check className="size-4" /> Reminder sent</span>
                       ) : (
                         <button className="btn-primary !px-4 !py-2 text-sm" onClick={() => { sendReminder(a.id); setSent({ ...sent, [a.id]: true }); }}>
                           <BellRing className="size-4" /> Send Reminder
@@ -103,7 +103,7 @@ function Dashboard() {
             )}
           </section>
 
-          <section className="rounded-[1.25rem] bg-secondary p-6">
+          <section className="rounded-lg bg-secondary p-6">
             <p className="flex items-center gap-2 text-sm font-semibold text-primary"><Sparkles className="size-4" /> Automation</p>
             <p className="mt-2 font-display text-2xl leading-snug">{scheduled} appointment reminders are scheduled automatically.</p>
             <ul className="mt-4 space-y-2 text-sm text-secondary-foreground">

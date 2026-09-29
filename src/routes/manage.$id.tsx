@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { CalendarClock, Check, MapPin, Phone } from "lucide-react";
 import { useState } from "react";
-import { Logo, SlotPicker, StatusPill } from "@/components/pearl";
+import { SiteHeader, SiteFooter, SlotPicker, StatusPill } from "@/components/pearl";
 import { CLINIC, cancelAppointment, fmtDate, fmtTime, getService, naira, rescheduleAppointment, useAppointment } from "@/lib/clinic";
 import { Missing } from "./booked.$id";
 
