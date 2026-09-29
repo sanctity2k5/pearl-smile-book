@@ -1,108 +1,29 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, CalendarClock, Clock, MapPin, ShieldCheck, Sun } from "lucide-react";
-import { Logo } from "@/components/pearl";
+import { ArrowRight, CalendarDays, Clock3, HeartPulse, MapPin, MessageSquareText, ShieldCheck, Sparkles, Stethoscope, Zap } from "lucide-react";
+import { SiteFooter, SiteHeader } from "@/components/pearl";
 import { CLINIC, SERVICES } from "@/lib/clinic";
+import suite from "@/assets/clinic-suite.jpg";
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "PearlSmile Dental — Book a dentist in Lagos" },
-      { name: "description", content: "Modern private dental care in Lagos. Choose a service, find a time and confirm your appointment in minutes." },
-      { property: "og:title", content: "PearlSmile Dental — Book a dentist in Lagos" },
-      { property: "og:description", content: "Modern dental care, without the waiting room hassle." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
-  component: Landing,
+  head: () => ({ meta: [
+    { title: "PearlSmile Dental — Private dental care in Lagos" },
+    { name: "description", content: "Book private dental care in Lagos. Explore services, see available appointments and reserve a time at PearlSmile Dental." },
+    { property: "og:title", content: "PearlSmile Dental — Private dental care in Lagos" },
+    { property: "og:description", content: "Choose your care, find a convenient time and book your visit." },
+    { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" },
+  ] }), component: Landing,
 });
-
+const icons = [Stethoscope, Sparkles, HeartPulse, Zap];
 function Landing() {
-  return (
-    <div className="min-h-screen">
-      <header className="mx-auto flex max-w-6xl items-center justify-between px-5 py-6">
-        <Logo />
-        <nav className="flex items-center gap-5 text-sm">
-          <Link to="/manage" className="hidden font-medium text-muted-foreground hover:text-foreground sm:block">Manage booking</Link>
-          <Link to="/book" className="btn-primary !px-4 !py-2 text-sm">Book</Link>
-        </nav>
-      </header>
-
-      <main className="mx-auto max-w-6xl px-5">
-        <section className="grid gap-12 pb-16 pt-10 md:grid-cols-[1.15fr_1fr] md:pt-16">
-          <div>
-            <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold-soft px-3 py-1 text-xs font-semibold text-foreground">
-              <MapPin className="size-3.5 text-gold" /> {CLINIC.city}
-            </p>
-            <h1 className="font-display text-5xl leading-[1.05] md:text-6xl">
-              Modern dental care, without the waiting room hassle.
-            </h1>
-            <p className="mt-6 max-w-lg text-lg text-muted-foreground">
-              Choose a service, find a convenient time, and confirm your appointment in minutes.
-            </p>
-            <div className="mt-8 flex flex-wrap items-center gap-4">
-              <Link to="/book" className="btn-primary !px-7 !py-4 text-base">
-                Book an Appointment <ArrowRight className="size-4" />
-              </Link>
-              <span className="text-sm text-muted-foreground">{CLINIC.hours}</span>
-            </div>
-          </div>
-
-          <aside className="card-soft space-y-5 self-end p-7">
-            {[
-              [Sun, "Same-day appointments", "Available when slots are open — see live availability instantly."],
-              [CalendarClock, "Saturday fills quickly", "Weekend appointments are popular. Book early to secure yours."],
-              [ShieldCheck, "Booking deposit", "A ₦10,000 deposit may be required for selected appointments."],
-            ].map(([Icon, t, d]) => {
-              const I = Icon as typeof Sun;
-              return (
-                <div key={t as string} className="flex gap-4">
-                  <span className="grid size-10 shrink-0 place-items-center rounded-full bg-secondary text-primary">
-                    <I className="size-5" />
-                  </span>
-                  <div>
-                    <p className="font-semibold">{t as string}</p>
-                    <p className="text-sm text-muted-foreground">{d as string}</p>
-                  </div>
-                </div>
-              );
-            })}
-          </aside>
-        </section>
-
-        <section className="border-t pb-20 pt-12">
-          <div className="mb-6 flex items-end justify-between">
-            <h2 className="font-display text-3xl">Our appointments</h2>
-            <Link to="/book" className="text-sm font-semibold text-primary">View all →</Link>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {SERVICES.map((s) => (
-              <Link
-                key={s.id}
-                to="/book"
-                search={{ service: s.id }}
-                className="card-soft group flex flex-col justify-between gap-6 p-6 transition hover:border-primary/40"
-              >
-                <div>
-                  <p className="font-semibold">{s.name}</p>
-                  <p className="mt-1 text-sm text-muted-foreground">{s.description}</p>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="inline-flex items-center gap-1.5 text-muted-foreground"><Clock className="size-4" />{s.duration} min</span>
-                  <ArrowRight className="size-4 text-primary transition group-hover:translate-x-1" />
-                </div>
-              </Link>
-            ))}
-          </div>
-        </section>
-      </main>
-
-      <footer className="border-t">
-        <div className="mx-auto flex max-w-6xl flex-col gap-2 px-5 py-8 text-sm text-muted-foreground sm:flex-row sm:justify-between">
-          <span>{CLINIC.address} · {CLINIC.phone}</span>
-          <Link to="/portal/login" className="hover:text-foreground">Clinic portal</Link>
-        </div>
-      </footer>
-    </div>
-  );
+  return <div className="flex min-h-screen flex-col"><SiteHeader />
+    <main className="flex-1">
+      <div className="mx-auto max-w-7xl px-5 pt-4"><div className="flex flex-wrap items-center justify-between gap-2 rounded-full bg-secondary px-4 py-2 text-xs text-secondary-foreground"><span>● &nbsp; Live clinic availability &nbsp; · &nbsp; Find your next open appointment</span><span>Saturday slots fill quickly &nbsp; · &nbsp; <Link to="/book" className="font-semibold underline">Reserve a slot →</Link></span></div></div>
+      <section className="mx-auto grid max-w-7xl items-center gap-10 px-5 py-10 lg:grid-cols-[1.25fr_0.85fr] lg:py-12">
+        <div><p className="mb-4 text-xs font-semibold uppercase text-primary">Boutique dental care · Lagos, Nigeria</p><h1 className="max-w-3xl font-display text-4xl leading-tight md:text-6xl">Modern dental care, without the waiting room hassle.</h1><p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground">Choose a service, find a convenient time, and confirm your appointment in minutes. Private, thoughtful care from your first visit.</p><div className="mt-7 flex flex-wrap gap-3"><Link to="/book" className="btn-primary">Book an Appointment <ArrowRight className="size-4" /></Link><a href={`https://wa.me/${CLINIC.phone.replace(/\D/g, "")}`} className="btn-outline"><MessageSquareText className="size-4" /> WhatsApp the clinic</a></div><div className="mt-10 grid max-w-2xl gap-3 sm:grid-cols-3"><Benefit icon={Clock3} title="Zero wait policy" detail="Your appointment starts at your scheduled time." /><Benefit icon={ShieldCheck} title="Credited deposit" detail="Your deposit goes toward your final bill." /><Benefit icon={Zap} title="Urgent care" detail="See available emergency times instantly." /></div></div>
+        <div className="relative overflow-hidden rounded-lg"><img src={suite} alt="Bright private dental treatment suite" className="aspect-[4/3] w-full object-cover" width={1408} height={880} /><div className="absolute inset-x-0 bottom-0 bg-foreground/80 p-5 text-primary-foreground"><p className="text-xs font-semibold uppercase">PearlSmile Dental · Lagos</p><p className="mt-1 text-lg font-semibold">A calmer way to care for your smile.</p></div></div>
+      </section>
+      <section className="bg-secondary/60 py-14"><div className="mx-auto max-w-7xl px-5"><p className="text-xs font-semibold uppercase text-primary">Step 1 · Curated treatments</p><div className="mb-7 flex flex-wrap items-end justify-between gap-3"><div><h2 className="mt-1 font-display text-3xl">Select your clinical care pathway</h2><p className="mt-2 text-sm text-muted-foreground">Choose the visit that best fits your needs.</p></div><span className="rounded-md bg-card px-4 py-2 text-xs text-primary">Booking deposit credited toward your final bill</span></div><div className="grid gap-4 md:grid-cols-2">{SERVICES.map((s, i) => { const Icon = icons[i]; return <Link to="/book" search={{ service: s.id }} key={s.id} className="flex min-h-52 flex-col justify-between rounded-lg border bg-card p-6 transition hover:border-primary"><div><div className="flex items-start justify-between"><span className="grid size-10 place-items-center rounded-md bg-secondary text-primary"><Icon className="size-5" /></span><span className="text-right text-xs text-muted-foreground">{s.duration} min<br /><strong className="text-sm text-foreground">{s.price}</strong></span></div><h3 className="mt-4 font-semibold">{s.name}</h3><p className="mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">{s.description}</p></div><div className="mt-5 flex items-center justify-between border-t pt-4 text-xs"><span className="text-muted-foreground">{s.deposit ? `${CLINIC.deposit.toLocaleString("en-NG")} NGN deposit applied` : "No deposit required"}</span><span className="rounded-md bg-secondary px-3 py-2 font-medium text-primary">Select service →</span></div></Link>; })}</div></div></section>
+      <section className="mx-auto grid max-w-7xl gap-8 px-5 py-16 md:grid-cols-3"><Benefit icon={ShieldCheck} title="Private appointments" detail="Time set aside for your care, never a crowded waiting room." /><Benefit icon={CalendarDays} title="Easy changes" detail="Reschedule or cancel online when plans change." /><Benefit icon={MapPin} title="Care in Lagos" detail={`${CLINIC.address} · ${CLINIC.phone}`} /></section>
+    </main><SiteFooter /></div>;
 }
+function Benefit({ icon: Icon, title, detail }: { icon: typeof Clock3; title: string; detail: string }) { return <div className="rounded-lg bg-card/80 p-4"><Icon className="mb-2 size-5 text-primary" /><h3 className="text-sm font-semibold">{title}</h3><p className="mt-1 text-xs leading-relaxed text-muted-foreground">{detail}</p></div>; }
