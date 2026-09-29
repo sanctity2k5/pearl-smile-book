@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { CalendarCheck2, Check, ChevronLeft, ChevronRight, Zap } from "lucide-react";
+import { CalendarCheck2, Check, ChevronLeft, ChevronRight, LockKeyhole, MapPin, Zap } from "lucide-react";
 import { useMemo, useState } from "react";
 import {
   CLINIC,
@@ -13,20 +13,44 @@ import {
   type Status,
 } from "@/lib/clinic";
 import { cn } from "@/lib/utils";
+import logoAsset from "@/assets/pearlsmile-logo.png.asset.json";
 
 export function Logo({ sub }: { sub?: string }) {
   return (
-    <Link to="/" className="flex items-center gap-3">
-      <span className="grid size-9 place-items-center rounded-full border border-gold/50 bg-card">
-        <svg viewBox="0 0 24 24" className="size-5 text-primary" fill="none" stroke="currentColor" strokeWidth="1.6">
-          <path d="M7 3.5c-2.2 0-3.5 1.8-3.5 4.3 0 3 1.2 4.2 1.8 7.4.5 2.8 1 5.3 2.3 5.3 1.6 0 1.5-4.8 4.4-4.8s2.8 4.8 4.4 4.8c1.3 0 1.8-2.5 2.3-5.3.6-3.2 1.8-4.4 1.8-7.4 0-2.5-1.3-4.3-3.5-4.3-2 0-3 1.2-5 1.2S9 3.5 7 3.5Z" />
-        </svg>
-      </span>
-      <span className="leading-tight">
-        <span className="block font-display text-xl text-foreground">{CLINIC.name}</span>
-        <span className="block text-xs text-muted-foreground">{sub ?? CLINIC.city}</span>
+    <Link to="/" className="flex shrink-0 items-center gap-4">
+      <img src={logoAsset.url} alt="PearlSmile Dental" className="h-8 w-auto" width={143} height={42} />
+      <span className="hidden border-l border-border pl-4 leading-tight sm:block">
+        <span className="block text-base font-medium text-primary">PearlSmile</span>
+        <span className="flex items-center gap-1 text-[10px] text-muted-foreground"><MapPin className="size-3" />{sub ?? "Victoria Island, Lagos"}</span>
       </span>
     </Link>
+  );
+}
+
+export function SiteHeader() {
+  return (
+    <header className="border-b bg-card/95">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-5">
+        <Logo />
+        <span className="hidden rounded-full bg-secondary px-3 py-1.5 text-xs font-medium text-primary lg:inline-flex">● &nbsp; Direct Line / WhatsApp: &nbsp; {CLINIC.phone}</span>
+        <nav className="flex items-center gap-2 sm:gap-5 text-sm">
+          <Link to="/book" className="btn-primary !px-3 !py-2 sm:!px-5">Book Appointment</Link>
+          <Link to="/manage" className="hidden font-medium hover:text-primary md:block">Manage Booking</Link>
+          <Link to="/portal/login" className="hidden items-center gap-1.5 text-xs text-muted-foreground hover:text-primary lg:flex"><LockKeyhole className="size-3.5" />Owner Portal</Link>
+        </nav>
+      </div>
+    </header>
+  );
+}
+
+export function SiteFooter() {
+  return (
+    <footer className="mt-auto border-t bg-secondary/80">
+      <div className="mx-auto flex max-w-7xl flex-col gap-4 px-5 py-8 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-4"><img src={logoAsset.url} alt="" className="h-6 w-auto" width={143} height={42} /><strong className="text-base font-medium text-primary">PearlSmile Dental</strong><span>© 2025. Private Dental Care Victoria Island.</span></div>
+        <div className="flex gap-6"><span>Patient Confidentiality</span><span>Emergency Triage</span><span>Terms of Service</span></div>
+      </div>
+    </footer>
   );
 }
 
@@ -110,7 +134,7 @@ export function SlotPicker({
   return (
     <div className="space-y-6">
       {emergency && todayFree.length > 0 && (
-        <div className="flex flex-col gap-4 rounded-2xl border border-urgent/25 bg-urgent-soft p-5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-4 rounded-lg border border-urgent/25 bg-urgent-soft p-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex gap-3">
             <Zap className="mt-0.5 size-5 shrink-0 text-urgent" />
             <div>
@@ -158,7 +182,7 @@ export function SlotPicker({
               onClick={() => go(d)}
               disabled={closed}
               className={cn(
-                "flex flex-col items-center rounded-2xl border px-1 py-3 transition",
+                "flex flex-col items-center rounded-lg border px-1 py-3 transition",
                 sel ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card hover:border-primary/50",
                 closed && "opacity-40",
               )}
@@ -182,9 +206,9 @@ export function SlotPicker({
       )}
 
       {slots.length === 0 ? (
-        <p className="rounded-2xl border border-dashed p-8 text-center text-muted-foreground">We're closed on Sundays.</p>
+        <p className="rounded-lg border border-dashed p-8 text-center text-muted-foreground">We're closed on Sundays.</p>
       ) : slots.every((s) => !s.available) ? (
-        <div className="rounded-2xl border border-dashed p-8 text-center">
+        <div className="rounded-lg border border-dashed p-8 text-center">
           <p className="font-medium">No openings on this day</p>
           <button className="mt-3 text-sm font-semibold text-primary" onClick={() => go(addDays(day, 1))}>
             Check the next day →
