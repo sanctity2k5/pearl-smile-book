@@ -45,8 +45,8 @@ export function SiteFooter() {
   return (
     <footer className="mt-auto border-t bg-secondary/80">
       <div className="mx-auto flex max-w-7xl flex-col gap-4 px-5 py-8 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-4"><img src={logoAsset.url} alt="" className="h-6 w-auto" width={143} height={42} /><strong className="text-base font-medium text-primary">PearlSmile Dental</strong><span>© 2026. Private Dental Care Lagos.</span></div>
-        <div className="flex gap-6"><span>Patient Confidentiality</span><span>Emergency Triage</span><span>Terms of Service</span></div>
+        <div className="flex flex-wrap items-center gap-4"><img src={logoAsset.url} alt="" className="h-6 w-auto" width={143} height={42} /><strong className="text-base font-medium text-primary">PearlSmile Dental</strong><span>© 2026. Private Dental Care Victoria Island.</span></div>
+        <div className="flex flex-wrap gap-6"><a href="mailto:concierge@pearlsmile-dental.com?subject=Patient%20confidentiality">Patient Confidentiality</a><Link to="/book" search={{ service: "emergency" }}>Emergency Triage</Link><a href="mailto:concierge@pearlsmile-dental.com?subject=Terms%20of%20service">Terms of Service</a></div>
       </div>
     </footer>
   );

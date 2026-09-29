@@ -10,3 +10,4 @@
 <!-- LOVABLE:END -->
 
 - Use shared patient-facing `SiteHeader`, `SiteFooter`, and semantic theme tokens so every screen follows the supplied PearlSmile visual system.
+- Keep landing-page booking tied to the shared appointment store and duration-aware `slotsFor`, so availability and confirmations match the other screens.
