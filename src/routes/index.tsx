@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, ArrowUpRight, CalendarDays, Clock3, MapPin, MessageCircle, ShieldCheck, Sparkles, Stethoscope, Zap, type LucideIcon } from "lucide-react";
+import { ArrowRight, ArrowUpRight, CalendarDays, Clock3, MapPin, Phone, ShieldCheck, Sparkles, Stethoscope, Zap, type LucideIcon } from "lucide-react";
 import { useMemo } from "react";
 import { SiteFooter, SiteHeader } from "@/components/pearl";
 import { Button } from "@/components/ui/button";
@@ -24,7 +24,6 @@ const serviceIcons: Record<ServiceId, LucideIcon> = {
   cosmetic: Sparkles,
   emergency: Zap,
 };
-const whatsapp = `https://wa.me/${CLINIC.phone.replace(/\D/g, "")}`;
 
 function Landing() {
   const appointments = useAppointments();
@@ -56,7 +55,7 @@ function Landing() {
             <p className="mt-6 max-w-lg text-base leading-8 text-primary-foreground/90 sm:text-lg">Thoughtful, one-to-one dentistry in the heart of Lagos. Find a time that works for you and leave the waiting behind.</p>
             <div className="mt-9 flex flex-wrap gap-3">
               <Button asChild size="lg" className="h-12 px-6"><Link to="/book">Book an appointment <ArrowRight /></Link></Button>
-              <Button asChild variant="outline" size="lg" className="h-12 border-primary-foreground/60 bg-card/90 px-6 text-foreground hover:bg-card"><a href={whatsapp} target="_blank" rel="noopener noreferrer"><MessageCircle /> WhatsApp us</a></Button>
+              <Button asChild variant="outline" size="lg" className="h-12 border-primary-foreground/60 bg-card/90 px-6 text-foreground hover:bg-card"><a href={`tel:${CLINIC.phone.replace(/\s/g, "")}`}><Phone /> Call the clinic</a></Button>
             </div>
           </div>
         </div>

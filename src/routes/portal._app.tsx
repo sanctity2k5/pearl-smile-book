@@ -16,11 +16,11 @@ function PortalLayout() {
     else nav({ to: "/portal/login" });
   }, [nav]);
   if (!ok) return null;
-  const link = "flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground";
-  const active = { className: "!bg-primary-soft !text-primary" };
+  const link = "flex items-center gap-2 border-b-2 border-transparent px-1 pb-1 pt-1 text-sm font-medium text-muted-foreground transition-colors hover:text-primary";
+  const active = { className: "!border-primary !text-primary" };
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-30 border-b bg-card/90 backdrop-blur">
+      <header className="sticky top-0 z-30 border-b border-primary/10 bg-sidebar backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-3">
           <Logo sub="Owner Portal" />
           <nav className="flex items-center gap-1">
