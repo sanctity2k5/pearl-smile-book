@@ -1,56 +1,12 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { ArrowLeft, ArrowRight, Eye, EyeOff, LockKeyhole, Mail, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import { Logo } from "@/components/pearl";
-
-export const Route = createFileRoute("/portal/login")({
-  head: () => ({
-    meta: [
-      { title: "Owner Portal sign in — PearlSmile Dental" },
-      { name: "description", content: "Sign in to the PearlSmile Dental owner and reception portal." },
-      { property: "og:title", content: "Owner Portal — PearlSmile Dental" },
-      { property: "og:description", content: "Reception and owner portal for PearlSmile Dental." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "robots", content: "noindex" },
-    ],
-  }),
-  component: Login,
-});
-
+import { Button } from "@/components/ui/button";
+export const Route = createFileRoute("/portal/login")({ head: () => ({ meta: [
+ { title: "Owner Portal sign in — PearlSmile Dental" }, { name: "description", content: "Sign in to the PearlSmile Dental owner and reception portal." }, { property: "og:title", content: "Owner Portal — PearlSmile Dental" }, { property: "og:description", content: "Reception and owner portal for PearlSmile Dental." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }, { name: "robots", content: "noindex" },
+] }), component: Login });
 function Login() {
-  const nav = useNavigate();
-  const [email, setEmail] = useState("owner@pearlsmile.ng");
-  const [pw, setPw] = useState("demo1234");
-  const [forgot, setForgot] = useState(false);
-  return (
-    <div className="grid min-h-screen place-items-center bg-secondary/40 px-5">
-      <div className="w-full max-w-sm">
-        <div className="mb-8 flex justify-center"><Logo sub="Owner Portal" /></div>
-        <form
-          className="card-soft space-y-5 p-8"
-          onSubmit={(e) => {
-            e.preventDefault();
-            sessionStorage.setItem("ps-owner", "1");
-            nav({ to: "/portal" });
-          }}
-        >
-          <h1 className="font-display text-3xl">Sign in</h1>
-          <label className="block">
-            <span className="mb-1.5 block text-sm font-medium">Email</span>
-            <input className="field" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-          </label>
-          <label className="block">
-            <span className="mb-1.5 flex justify-between text-sm font-medium">
-              Password
-              <button type="button" onClick={() => setForgot(true)} className="font-medium text-primary">Forgot password</button>
-            </span>
-            <input className="field" type="password" value={pw} onChange={(e) => setPw(e.target.value)} required />
-          </label>
-          {forgot && <p className="rounded-xl bg-primary-soft px-3 py-2 text-sm text-primary">A reset link has been sent to {email}.</p>}
-          <button className="btn-primary w-full">Sign In</button>
-          <p className="text-center text-xs text-muted-foreground">Demo portal — credentials are pre-filled.</p>
-        </form>
-      </div>
-    </div>
-  );
+ const nav = useNavigate(); const [email, setEmail] = useState("owner@pearlsmile.ng"); const [pw, setPw] = useState("demo1234"); const [show, setShow] = useState(false); const [remember, setRemember] = useState(true); const [forgot, setForgot] = useState(false);
+ return <div className="flex min-h-screen flex-col bg-secondary/70"><header className="flex h-20 items-center justify-between border-b bg-card px-5 md:px-10"><Logo sub="Owner Portal" /><span className="hidden items-center gap-2 text-xs text-primary sm:flex"><ShieldCheck className="size-4" /> Secure Staff Access</span></header><main className="grid flex-1 place-items-center px-5 py-16"><div className="w-full max-w-md"><div className="rounded-lg border bg-card p-7 shadow-sm sm:p-9"><span className="grid size-11 place-items-center rounded-md bg-primary-soft text-primary"><LockKeyhole className="size-5" /></span><h1 className="mt-5 font-display text-3xl">Welcome back.</h1><p className="mt-2 text-sm text-muted-foreground">Sign in to manage your clinic's appointments.</p><form className="mt-8 space-y-5" onSubmit={e => { e.preventDefault(); sessionStorage.setItem("ps-owner", "1"); nav({ to: "/portal" }); }}><label className="block text-sm font-semibold">Work email address<div className="relative mt-2"><Mail className="absolute left-3 top-3.5 size-4 text-muted-foreground" /><input type="email" className="field !pl-10 bg-secondary/50" value={email} onChange={e => setEmail(e.target.value)} required /></div></label><label className="block text-sm font-semibold">Password<div className="relative mt-2"><LockKeyhole className="absolute left-3 top-3.5 size-4 text-muted-foreground" /><input type={show ? "text" : "password"} className="field !pl-10 !pr-10 bg-secondary/50" value={pw} onChange={e => setPw(e.target.value)} required /><Button type="button" variant="ghost" size="icon" className="absolute right-1 top-1" aria-label={show ? "Hide password" : "Show password"} onClick={() => setShow(!show)}>{show ? <EyeOff /> : <Eye />}</Button></div></label><div className="flex items-center justify-between gap-3 text-xs"><label className="flex items-center gap-2 text-muted-foreground"><input type="checkbox" checked={remember} onChange={e => setRemember(e.target.checked)} className="accent-primary" />Remember this device</label><Button type="button" variant="link" className="h-auto p-0 text-xs" onClick={() => setForgot(true)}>Forgot password?</Button></div>{forgot && <p role="status" className="rounded-md bg-secondary p-3 text-xs text-primary">Demo only — password resets aren't sent. Use the pre-filled sign-in.</p>}<Button className="w-full">Sign in to Portal <ArrowRight /></Button></form><div className="mt-8 flex gap-3 rounded-md bg-secondary/70 p-4 text-xs text-muted-foreground"><ShieldCheck className="size-5 shrink-0 text-primary" /><span>Your clinic workspace is private. Patient information stays within the staff portal.</span></div></div><div className="mt-6 flex items-center justify-between text-xs"><Link to="/" className="flex items-center gap-1 text-primary"><ArrowLeft className="size-3" /> Return to patient site</Link><span className="text-muted-foreground">PearlSmile Dental · Lagos</span></div></div></main></div>;
 }

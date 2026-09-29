@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { useState } from "react";
-import { Logo } from "@/components/pearl";
+import { SiteHeader, SiteFooter } from "@/components/pearl";
 import { fmtDate, fmtTime, getService, useAppointments } from "@/lib/clinic";
 
 export const Route = createFileRoute("/manage/")({
@@ -33,9 +33,8 @@ function Find() {
             (a.id.toLowerCase() === q.trim().toLowerCase() || (digits.length >= 7 && a.phone.replace(/\D/g, "").endsWith(digits.slice(-7)))),
         );
   return (
-    <div className="min-h-screen">
-      <header className="mx-auto max-w-6xl px-5 py-6"><Logo /></header>
-      <main className="mx-auto max-w-lg px-5 pt-10">
+    <div className="flex min-h-screen flex-col"><SiteHeader />
+      <main className="mx-auto w-full max-w-lg flex-1 px-5 py-12">
         <h1 className="font-display text-4xl">Manage your booking</h1>
         <p className="mt-3 text-muted-foreground">Enter your booking reference (e.g. PS-4K2QX) or the phone number you booked with.</p>
         <input className="field mt-6" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Reference or phone number" />
@@ -51,7 +50,7 @@ function Find() {
           ))}
           {q.trim().length >= 3 && found.length === 0 && <p className="text-sm text-muted-foreground">No upcoming appointments match yet.</p>}
         </div>
-      </main>
+      </main><SiteFooter />
     </div>
   );
 }

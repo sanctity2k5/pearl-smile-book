@@ -1,93 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { BellRing, CalendarPlus, Check, MessageCircle } from "lucide-react";
-import { Logo, downloadIcs } from "@/components/pearl";
+import { BellRing, CalendarDays, CalendarPlus, Check, Clock3, LockKeyhole, MapPin, MessageCircle, Phone } from "lucide-react";
+import { SiteFooter, SiteHeader, downloadIcs } from "@/components/pearl";
 import { CLINIC, apptEnd, fmtDate, fmtTime, getService, naira, useAppointment } from "@/lib/clinic";
-
-export const Route = createFileRoute("/booked/$id")({
-  ssr: false,
-  head: () => ({
-    meta: [
-      { title: "You're booked — PearlSmile Dental" },
-      { name: "description", content: "Your PearlSmile Dental appointment is confirmed." },
-      { property: "og:title", content: "You're booked — PearlSmile Dental" },
-      { property: "og:description", content: "Your appointment is confirmed. A reminder will be sent before your visit." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "robots", content: "noindex" },
-    ],
-  }),
-  component: Booked,
-});
-
-function Booked() {
-  const { id } = Route.useParams();
-  const a = useAppointment(id);
-  if (!a) return <Missing />;
-  const s = getService(a.serviceId);
-
-  return (
-    <div className="min-h-screen">
-      <header className="mx-auto max-w-6xl px-5 py-6"><Logo /></header>
-      <main className="mx-auto max-w-xl px-5 pb-20 pt-6 text-center">
-        <span className="mx-auto grid size-16 place-items-center rounded-full bg-primary text-primary-foreground animate-in zoom-in-50 duration-500">
-          <Check className="size-8" strokeWidth={2.5} />
-        </span>
-        <h1 className="mt-6 font-display text-5xl md:text-6xl">You're booked.</h1>
-        <p className="mx-auto mt-4 max-w-md text-muted-foreground">
-          Your appointment has been confirmed. We'll send you a reminder before your visit.
-        </p>
-
-        <div className="card-soft mt-10 overflow-hidden text-left">
-          <div className="border-b bg-secondary/60 px-7 py-5">
-            <p className="font-display text-xl">{CLINIC.name}</p>
-            <p className="text-sm text-muted-foreground">{CLINIC.city}</p>
-          </div>
-          <div className="space-y-6 p-7">
-            <div>
-              <p className="font-display text-3xl">{fmtDate(a.start)}</p>
-              <p className="text-2xl text-primary">{fmtTime(a.start)}</p>
-              <p className="mt-2 font-medium">{s.name}</p>
-            </div>
-            <dl className="grid grid-cols-2 gap-4 border-t pt-5 text-sm">
-              <Item k="Patient" v={a.name} />
-              <Item k="Duration" v={`${s.duration} minutes`} />
-              <Item k="Deposit" v={a.deposit === "paid" ? `${naira(CLINIC.deposit)} paid` : "Not required"} />
-              <Item k="Reference" v={a.id} />
-              <div className="col-span-2"><Item k="Location" v={CLINIC.address} /></div>
-            </dl>
-          </div>
-        </div>
-
-        <div className="mt-6 grid gap-3 text-left text-sm sm:grid-cols-2">
-          <p className="flex items-center gap-2.5 rounded-2xl bg-card px-4 py-3 ring-1 ring-border"><MessageCircle className="size-4 text-primary" /> Confirmation sent to WhatsApp</p>
-          <p className="flex items-center gap-2.5 rounded-2xl bg-card px-4 py-3 ring-1 ring-border"><BellRing className="size-4 text-primary" /> Reminder set for 24h before</p>
-        </div>
-
-        <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-          <button className="btn-primary" onClick={() => downloadIcs(a, s.name, apptEnd(a))}><CalendarPlus className="size-4" /> Add to Calendar</button>
-          <Link to="/manage/$id" params={{ id: a.id }} className="btn-outline">Manage Appointment</Link>
-        </div>
-      </main>
-    </div>
-  );
+import { Button } from "@/components/ui/button";
+export const Route = createFileRoute("/booked/$id")({ ssr: false, head: () => ({ meta: [
+ { title: "You're booked — PearlSmile Dental" }, { name: "description", content: "Your PearlSmile Dental appointment is confirmed." }, { property: "og:title", content: "You're booked — PearlSmile Dental" }, { property: "og:description", content: "Your appointment is confirmed. A reminder is scheduled before your visit." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }, { name: "robots", content: "noindex" },
+] }), component: Booked });
+function Booked() { const { id } = Route.useParams(); const a = useAppointment(id); if (!a) return <Missing />; const s = getService(a.serviceId);
+ return <div className="flex min-h-screen flex-col"><SiteHeader /><main className="mx-auto w-full max-w-5xl flex-1 px-5 pb-16"><p className="my-5 border-b pb-4 text-xs font-semibold uppercase text-primary">Appointment confirmed · PearlSmile Dental</p><div className="py-8 text-center"><span className="mx-auto grid size-16 place-items-center rounded-full bg-primary-soft text-primary"><Check className="size-8" strokeWidth={3} /></span><p className="mt-5 text-xs font-semibold uppercase text-primary">Booking verified · Reference {a.id}</p><h1 className="mt-2 font-display text-4xl md:text-5xl">You're booked.</h1><p className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-muted-foreground">Your appointment has been confirmed. We'll send you a reminder before your visit.</p></div><div className="grid gap-5 md:grid-cols-[1.3fr_0.8fr]"><section className="overflow-hidden rounded-lg border bg-card"><div className="flex items-center gap-3 border-b bg-primary px-6 py-5 text-primary-foreground"><CalendarDays className="size-5" /><div><h2 className="font-semibold">Your appointment</h2><p className="text-xs opacity-80">PearlSmile Dental · Lagos, Nigeria</p></div></div><div className="p-6"><p className="text-xs text-muted-foreground">Date & time</p><p className="mt-1 font-display text-2xl">{fmtDate(a.start)}</p><p className="mt-1 text-xl font-semibold text-primary">{fmtTime(a.start)}</p><dl className="mt-6 grid grid-cols-2 gap-5 border-t pt-5 text-sm"><Item k="Service" v={s.name} /><Item k="Duration" v={`${s.duration} minutes`} /><Item k="Patient" v={a.name} /><Item k="Booking reference" v={a.id} /></dl><div className="mt-6 flex flex-wrap gap-3"><Button onClick={() => downloadIcs(a, s.name, apptEnd(a))}><CalendarPlus /> Add to Calendar</Button><Link to="/manage/$id" params={{ id: a.id }} className="btn-outline">Manage Appointment</Link></div></div></section><div className="space-y-5"><section className="rounded-lg border bg-card p-6"><div className="flex items-center gap-2"><LockKeyhole className="size-5 text-primary" /><h2 className="font-semibold">Deposit status</h2></div><p className="mt-4 text-2xl font-semibold text-primary">{a.deposit === "paid" ? `${naira(CLINIC.deposit)} paid` : "No deposit required"}</p><p className="mt-2 text-xs leading-relaxed text-muted-foreground">{a.deposit === "paid" ? "Your booking deposit is credited toward your final bill. Demo payment only." : "Your appointment is confirmed without a deposit."}</p></section><section className="rounded-lg border bg-card p-6"><h2 className="font-semibold">Your visit</h2><p className="mt-4 flex items-start gap-2 text-sm"><MapPin className="mt-0.5 size-4 shrink-0 text-primary" />{CLINIC.address}</p><p className="mt-3 flex items-center gap-2 text-sm"><Phone className="size-4 text-primary" />{CLINIC.phone}</p><p className="mt-3 flex items-center gap-2 text-sm"><Clock3 className="size-4 text-primary" />{CLINIC.hours}</p></section></div></div><section className="mt-5 grid gap-4 rounded-lg bg-secondary p-5 sm:grid-cols-2"><div className="flex gap-3"><MessageCircle className="size-5 shrink-0 text-primary" /><div><h3 className="text-sm font-semibold">Confirmation prepared</h3><p className="mt-1 text-xs text-muted-foreground">Your booking details are ready for your records.</p></div></div><div className="flex gap-3"><BellRing className="size-5 shrink-0 text-primary" /><div><h3 className="text-sm font-semibold">Reminder scheduled</h3><p className="mt-1 text-xs text-muted-foreground">A reminder is shown in this demo for 24 hours before your visit.</p></div></div></section><p className="mt-6 text-center text-xs text-muted-foreground">Your booking details are kept private. This prototype does not send messages or process real payments.</p></main><SiteFooter /></div>;
 }
-
-function Item({ k, v }: { k: string; v: string }) {
-  return (
-    <div>
-      <dt className="text-muted-foreground">{k}</dt>
-      <dd className="font-medium">{v}</dd>
-    </div>
-  );
-}
-
-export function Missing() {
-  return (
-    <div className="grid min-h-screen place-items-center px-5 text-center">
-      <div>
-        <p className="font-display text-3xl">We couldn't find that appointment</p>
-        <Link to="/manage" className="btn-outline mt-6">Find my booking</Link>
-      </div>
-    </div>
-  );
-}
+function Item({ k,v }: { k:string; v:string }) { return <div><dt className="text-xs text-muted-foreground">{k}</dt><dd className="mt-1 font-semibold">{v}</dd></div>; }
+export function Missing() { return <div className="grid min-h-screen place-items-center px-5 text-center"><div><p className="font-display text-3xl">We couldn't find that appointment</p><Link to="/manage" className="btn-outline mt-6">Find my booking</Link></div></div>; }
