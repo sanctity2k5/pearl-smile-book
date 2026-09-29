@@ -182,3 +182,13 @@
   }
   button, a { cursor: pointer; }
 }
+
+/* Editorial photo treatment for the patient-facing landing page. */
+.landing-hero-overlay {
+  background: linear-gradient(90deg, color-mix(in oklab, var(--foreground) 90%, transparent) 0%, color-mix(in oklab, var(--foreground) 76%, transparent) 39%, color-mix(in oklab, var(--foreground) 17%, transparent) 100%);
+}
+@media (max-width: 639px) {
+  .landing-hero-overlay {
+    background: linear-gradient(90deg, color-mix(in oklab, var(--foreground) 83%, transparent), color-mix(in oklab, var(--foreground) 52%, transparent));
+  }
+}
