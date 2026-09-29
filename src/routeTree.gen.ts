@@ -10,33 +10,149 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as BookRouteImport } from './routes/book'
+import { Route as BookedIdRouteImport } from './routes/booked.$id'
+import { Route as ManageIndexRouteImport } from './routes/manage.index'
+import { Route as ManageIdRouteImport } from './routes/manage.$id'
+import { Route as PortalAppRouteImport } from './routes/portal._app'
+import { Route as PortalLoginRouteImport } from './routes/portal.login'
+import { Route as PortalAppIndexRouteImport } from './routes/portal._app.index'
+import { Route as PortalAppCalendarRouteImport } from './routes/portal._app.calendar'
+import { Route as PortalAppAppointmentsIdRouteImport } from './routes/portal._app.appointments.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BookRoute = BookRouteImport.update({
+  id: '/book',
+  path: '/book',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookedIdRoute = BookedIdRouteImport.update({
+  id: '/booked/$id',
+  path: '/booked/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ManageIndexRoute = ManageIndexRouteImport.update({
+  id: '/manage/',
+  path: '/manage/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ManageIdRoute = ManageIdRouteImport.update({
+  id: '/manage/$id',
+  path: '/manage/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortalAppRoute = PortalAppRouteImport.update({
+  id: '/portal/_app',
+  path: '/portal',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortalLoginRoute = PortalLoginRouteImport.update({
+  id: '/portal/login',
+  path: '/portal/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortalAppIndexRoute = PortalAppIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PortalAppRoute,
+} as any)
+const PortalAppCalendarRoute = PortalAppCalendarRouteImport.update({
+  id: '/calendar',
+  path: '/calendar',
+  getParentRoute: () => PortalAppRoute,
+} as any)
+const PortalAppAppointmentsIdRoute = PortalAppAppointmentsIdRouteImport.update({
+  id: '/appointments/$id',
+  path: '/appointments/$id',
+  getParentRoute: () => PortalAppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/book': typeof BookRoute
+  '/booked/$id': typeof BookedIdRoute
+  '/manage/$id': typeof ManageIdRoute
+  '/portal': typeof PortalAppRouteWithChildren
+  '/portal/login': typeof PortalLoginRoute
+  '/manage/': typeof ManageIndexRoute
+  '/portal/calendar': typeof PortalAppCalendarRoute
+  '/portal/': typeof PortalAppIndexRoute
+  '/portal/appointments/$id': typeof PortalAppAppointmentsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/book': typeof BookRoute
+  '/booked/$id': typeof BookedIdRoute
+  '/manage/$id': typeof ManageIdRoute
+  '/portal/login': typeof PortalLoginRoute
+  '/manage': typeof ManageIndexRoute
+  '/portal/calendar': typeof PortalAppCalendarRoute
+  '/portal': typeof PortalAppIndexRoute
+  '/portal/appointments/$id': typeof PortalAppAppointmentsIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/book': typeof BookRoute
+  '/booked/$id': typeof BookedIdRoute
+  '/manage/$id': typeof ManageIdRoute
+  '/portal/_app': typeof PortalAppRouteWithChildren
+  '/portal/login': typeof PortalLoginRoute
+  '/manage/': typeof ManageIndexRoute
+  '/portal/_app/calendar': typeof PortalAppCalendarRoute
+  '/portal/_app/': typeof PortalAppIndexRoute
+  '/portal/_app/appointments/$id': typeof PortalAppAppointmentsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/book'
+    | '/booked/$id'
+    | '/manage/$id'
+    | '/portal'
+    | '/portal/login'
+    | '/manage/'
+    | '/portal/calendar'
+    | '/portal/'
+    | '/portal/appointments/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/book'
+    | '/booked/$id'
+    | '/manage/$id'
+    | '/portal/login'
+    | '/manage'
+    | '/portal/calendar'
+    | '/portal'
+    | '/portal/appointments/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/book'
+    | '/booked/$id'
+    | '/manage/$id'
+    | '/portal/_app'
+    | '/portal/login'
+    | '/manage/'
+    | '/portal/_app/calendar'
+    | '/portal/_app/'
+    | '/portal/_app/appointments/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BookRoute: typeof BookRoute
+  BookedIdRoute: typeof BookedIdRoute
+  ManageIdRoute: typeof ManageIdRoute
+  PortalAppRoute: typeof PortalAppRouteWithChildren
+  PortalLoginRoute: typeof PortalLoginRoute
+  ManageIndexRoute: typeof ManageIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +164,96 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/book': {
+      id: '/book'
+      path: '/book'
+      fullPath: '/book'
+      preLoaderRoute: typeof BookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/booked/$id': {
+      id: '/booked/$id'
+      path: '/booked/$id'
+      fullPath: '/booked/$id'
+      preLoaderRoute: typeof BookedIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/manage/': {
+      id: '/manage/'
+      path: '/manage'
+      fullPath: '/manage/'
+      preLoaderRoute: typeof ManageIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/manage/$id': {
+      id: '/manage/$id'
+      path: '/manage/$id'
+      fullPath: '/manage/$id'
+      preLoaderRoute: typeof ManageIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portal/_app': {
+      id: '/portal/_app'
+      path: '/portal'
+      fullPath: '/portal'
+      preLoaderRoute: typeof PortalAppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portal/login': {
+      id: '/portal/login'
+      path: '/portal/login'
+      fullPath: '/portal/login'
+      preLoaderRoute: typeof PortalLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portal/_app/': {
+      id: '/portal/_app/'
+      path: '/'
+      fullPath: '/portal/'
+      preLoaderRoute: typeof PortalAppIndexRouteImport
+      parentRoute: typeof PortalAppRoute
+    }
+    '/portal/_app/calendar': {
+      id: '/portal/_app/calendar'
+      path: '/calendar'
+      fullPath: '/portal/calendar'
+      preLoaderRoute: typeof PortalAppCalendarRouteImport
+      parentRoute: typeof PortalAppRoute
+    }
+    '/portal/_app/appointments/$id': {
+      id: '/portal/_app/appointments/$id'
+      path: '/appointments/$id'
+      fullPath: '/portal/appointments/$id'
+      preLoaderRoute: typeof PortalAppAppointmentsIdRouteImport
+      parentRoute: typeof PortalAppRoute
+    }
   }
 }
 
+interface PortalAppRouteChildren {
+  PortalAppCalendarRoute: typeof PortalAppCalendarRoute
+  PortalAppIndexRoute: typeof PortalAppIndexRoute
+  PortalAppAppointmentsIdRoute: typeof PortalAppAppointmentsIdRoute
+}
+
+const PortalAppRouteChildren: PortalAppRouteChildren = {
+  PortalAppCalendarRoute: PortalAppCalendarRoute,
+  PortalAppIndexRoute: PortalAppIndexRoute,
+  PortalAppAppointmentsIdRoute: PortalAppAppointmentsIdRoute,
+}
+
+const PortalAppRouteWithChildren = PortalAppRoute._addFileChildren(
+  PortalAppRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BookRoute: BookRoute,
+  BookedIdRoute: BookedIdRoute,
+  ManageIdRoute: ManageIdRoute,
+  PortalAppRoute: PortalAppRouteWithChildren,
+  PortalLoginRoute: PortalLoginRoute,
+  ManageIndexRoute: ManageIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
