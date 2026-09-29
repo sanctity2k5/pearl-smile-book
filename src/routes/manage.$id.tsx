@@ -32,12 +32,8 @@ function Manage() {
   const cancelled = a.status === "cancelled";
 
   return (
-    <div className="min-h-screen pb-20">
-      <header className="mx-auto flex max-w-6xl items-center justify-between px-5 py-6">
-        <Logo />
-        <Link to="/book" className="text-sm font-medium text-muted-foreground hover:text-foreground">New booking</Link>
-      </header>
-      <main className="mx-auto max-w-3xl px-5 pt-4">
+    <div className="flex min-h-screen flex-col"><SiteHeader />
+      <main className="mx-auto w-full max-w-3xl flex-1 px-5 py-12">
         <p className="text-sm text-muted-foreground">Reference {a.id}</p>
         <h1 className="mt-1 font-display text-4xl md:text-5xl">Your appointment</h1>
 
@@ -123,7 +119,7 @@ function Manage() {
         {cancelled && (
           <Link to="/book" search={{ service: a.serviceId }} className="btn-primary mt-6">Book a new time</Link>
         )}
-      </main>
+      </main><SiteFooter />
     </div>
   );
 }
