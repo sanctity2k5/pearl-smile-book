@@ -101,7 +101,7 @@ export function SlotPicker({ duration, value, onChange, excludeId, emergency }: 
   const slots = slotsFor(day, duration, appts, excludeId);
   const todayFree = slotsFor(today, duration, appts, excludeId).filter(s => s.available);
   const go = (d: Date) => { if (d < today || d.getDay() === 0) return; setDay(d); setMonth(new Date(d.getFullYear(), d.getMonth(), 1)); };
-  const moveMonth = (n: number) => setMonth(new Date(month.getFullYear(), month.getMonth() + n, 1));
+  const moveMonth = (n: number) => { const next = new Date(month.getFullYear(), month.getMonth() + n, 1); setMonth(next); const first = next.getDay() === 0 ? addDays(next, 1) : next; if (first >= today) setDay(first); };
   return <div className="space-y-5">
     {emergency && todayFree.length > 0 && <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-urgent/25 bg-urgent-soft p-4"><div className="flex items-center gap-3"><Zap className="size-5 text-urgent" /><div><p className="text-sm font-semibold">Same-day emergency appointment available</p><p className="text-xs text-muted-foreground">Your earliest open time is {fmtTime(todayFree[0].time)} today.</p></div></div><Button onClick={() => { go(today); onChange(todayFree[0].time); }}>Take today {fmtTime(todayFree[0].time)}</Button></div>}
     <div className="grid gap-6 lg:grid-cols-[1fr_0.85fr]">
