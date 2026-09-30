@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, ArrowRight, CalendarDays, Check, Clock3, CreditCard, Loader2, LockKeyhole, ShieldCheck, Sparkles, Stethoscope, HeartPulse, Zap, X } from "lucide-react";
 import { useState } from "react";
 import { z } from "zod";
+import { toast } from "sonner";
 import { SiteHeader, SiteFooter, SlotPicker } from "@/components/pearl";
 import { CLINIC, SERVICES, createAppointment, fmtDate, fmtTime, getService, naira, type ServiceId } from "@/lib/clinic";
 import { cn } from "@/lib/utils";
@@ -19,7 +20,7 @@ function Book() {
  const [time, setTime] = useState<Date | null>(null); const [form, setForm] = useState({ name: "", phone: "", email: "", reason: "", notes: "" });
  const [paying, setPaying] = useState<"idle" | "open" | "processing">("idle");
  const s = sid ? getService(sid) : null; const valid = form.name.trim().length > 1 && form.phone.replace(/\D/g, "").length >= 10 && /\S+@\S+\.\S+/.test(form.email);
- const finish = () => { if (!s || !time) return; const a = createAppointment({ ...form, reason: [form.reason, form.notes].filter(Boolean).join(" · ") || undefined, serviceId: s.id, start: time }); nav({ to: "/booked/$id", params: { id: a.id } }); };
+ const finish = () => { if (!s || !time) return; try { const a = createAppointment({ ...form, reason: [form.reason, form.notes].filter(Boolean).join(" · ") || undefined, serviceId: s.id, start: time }); toast.success("You're booked!", { description: `${fmtDate(time)} at ${fmtTime(time)}` }); nav({ to: "/booked/$id", params: { id: a.id } }); } catch (e) { setPaying("idle"); toast.error("Booking failed", { description: (e as Error).message }); } };
  return <div className="flex min-h-screen flex-col"><SiteHeader /><main className="mx-auto w-full max-w-7xl flex-1 px-5 pb-16">
   <div className="my-5 flex justify-between border-b pb-4 text-xs text-muted-foreground"><span className="font-semibold uppercase text-primary">Private booking · PearlSmile Dental</span><span>● &nbsp; Available appointments this week</span></div>
   <ol className="mb-10 grid grid-cols-4 gap-2">{labels.map((label,i) => <li key={label} className="min-w-0"><div className={cn("mb-2 h-1 rounded-full", i <= step ? "bg-primary" : "bg-secondary")} /><button disabled={i > step || i === 3} onClick={() => setStep(i)} className="flex w-full flex-col items-start gap-1 text-left text-[10px] sm:flex-row sm:items-center sm:gap-2 sm:text-sm"><span className={cn("grid size-6 shrink-0 place-items-center rounded-full text-xs", i <= step ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground")}>{i < step ? <Check className="size-3" /> : i + 1}</span><span className="min-w-0 leading-tight"><span className="sm:hidden">{["Service", "Time", "Details", "Done"][i]}</span><span className="hidden sm:inline">{label}</span></span></button></li>)}</ol>
