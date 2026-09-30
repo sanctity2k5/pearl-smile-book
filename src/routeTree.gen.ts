@@ -17,6 +17,7 @@ import { Route as ManageIdRouteImport } from './routes/manage.$id'
 import { Route as PortalAppRouteImport } from './routes/portal._app'
 import { Route as PortalLoginRouteImport } from './routes/portal.login'
 import { Route as PortalAppIndexRouteImport } from './routes/portal._app.index'
+import { Route as PortalAppBookingsRouteImport } from './routes/portal._app.bookings'
 import { Route as PortalAppCalendarRouteImport } from './routes/portal._app.calendar'
 import { Route as PortalAppAppointmentsIdRouteImport } from './routes/portal._app.appointments.$id'
 
@@ -60,6 +61,11 @@ const PortalAppIndexRoute = PortalAppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => PortalAppRoute,
 } as any)
+const PortalAppBookingsRoute = PortalAppBookingsRouteImport.update({
+  id: '/bookings',
+  path: '/bookings',
+  getParentRoute: () => PortalAppRoute,
+} as any)
 const PortalAppCalendarRoute = PortalAppCalendarRouteImport.update({
   id: '/calendar',
   path: '/calendar',
@@ -79,6 +85,7 @@ export interface FileRoutesByFullPath {
   '/portal': typeof PortalAppRouteWithChildren
   '/portal/login': typeof PortalLoginRoute
   '/manage/': typeof ManageIndexRoute
+  '/portal/bookings': typeof PortalAppBookingsRoute
   '/portal/calendar': typeof PortalAppCalendarRoute
   '/portal/': typeof PortalAppIndexRoute
   '/portal/appointments/$id': typeof PortalAppAppointmentsIdRoute
@@ -90,6 +97,7 @@ export interface FileRoutesByTo {
   '/manage/$id': typeof ManageIdRoute
   '/portal/login': typeof PortalLoginRoute
   '/manage': typeof ManageIndexRoute
+  '/portal/bookings': typeof PortalAppBookingsRoute
   '/portal/calendar': typeof PortalAppCalendarRoute
   '/portal': typeof PortalAppIndexRoute
   '/portal/appointments/$id': typeof PortalAppAppointmentsIdRoute
@@ -103,6 +111,7 @@ export interface FileRoutesById {
   '/portal/_app': typeof PortalAppRouteWithChildren
   '/portal/login': typeof PortalLoginRoute
   '/manage/': typeof ManageIndexRoute
+  '/portal/_app/bookings': typeof PortalAppBookingsRoute
   '/portal/_app/calendar': typeof PortalAppCalendarRoute
   '/portal/_app/': typeof PortalAppIndexRoute
   '/portal/_app/appointments/$id': typeof PortalAppAppointmentsIdRoute
@@ -117,6 +126,7 @@ export interface FileRouteTypes {
     | '/portal'
     | '/portal/login'
     | '/manage/'
+    | '/portal/bookings'
     | '/portal/calendar'
     | '/portal/'
     | '/portal/appointments/$id'
@@ -128,6 +138,7 @@ export interface FileRouteTypes {
     | '/manage/$id'
     | '/portal/login'
     | '/manage'
+    | '/portal/bookings'
     | '/portal/calendar'
     | '/portal'
     | '/portal/appointments/$id'
@@ -140,6 +151,7 @@ export interface FileRouteTypes {
     | '/portal/_app'
     | '/portal/login'
     | '/manage/'
+    | '/portal/_app/bookings'
     | '/portal/_app/calendar'
     | '/portal/_app/'
     | '/portal/_app/appointments/$id'
@@ -213,6 +225,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PortalAppIndexRouteImport
       parentRoute: typeof PortalAppRoute
     }
+    '/portal/_app/bookings': {
+      id: '/portal/_app/bookings'
+      path: '/bookings'
+      fullPath: '/portal/bookings'
+      preLoaderRoute: typeof PortalAppBookingsRouteImport
+      parentRoute: typeof PortalAppRoute
+    }
     '/portal/_app/calendar': {
       id: '/portal/_app/calendar'
       path: '/calendar'
@@ -231,12 +250,14 @@ declare module '@tanstack/react-router' {
 }
 
 interface PortalAppRouteChildren {
+  PortalAppBookingsRoute: typeof PortalAppBookingsRoute
   PortalAppCalendarRoute: typeof PortalAppCalendarRoute
   PortalAppIndexRoute: typeof PortalAppIndexRoute
   PortalAppAppointmentsIdRoute: typeof PortalAppAppointmentsIdRoute
 }
 
 const PortalAppRouteChildren: PortalAppRouteChildren = {
+  PortalAppBookingsRoute: PortalAppBookingsRoute,
   PortalAppCalendarRoute: PortalAppCalendarRoute,
   PortalAppIndexRoute: PortalAppIndexRoute,
   PortalAppAppointmentsIdRoute: PortalAppAppointmentsIdRoute,
