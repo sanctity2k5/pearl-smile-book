@@ -1,12 +1,68 @@
-import { createFileRoute, Link, Outlet, useNavigate } from "@tanstack/react-router";
-import { CalendarDays, ExternalLink, LayoutGrid, LogOut } from "lucide-react";
+import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
+import { CalendarDays, LayoutGrid, ListChecks, LogOut } from "lucide-react";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { Logo } from "@/components/pearl";
+import {
+  Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader,
+  SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider, SidebarTrigger, useSidebar,
+} from "@/components/ui/sidebar";
 
 export const Route = createFileRoute("/portal/_app")({
   ssr: false,
   component: PortalLayout,
 });
+
+const items = [
+  { title: "Dashboard", url: "/portal", icon: LayoutGrid, exact: true },
+  { title: "Bookings", url: "/portal/bookings", icon: ListChecks, exact: false },
+  { title: "Calendar", url: "/portal/calendar", icon: CalendarDays, exact: false },
+] as const;
+
+function PortalSidebar() {
+  const nav = useNavigate();
+  const { state } = useSidebar();
+  const collapsed = state === "collapsed";
+  const path = useRouterState({ select: (r) => r.location.pathname });
+  const isActive = (url: string, exact: boolean) => (exact ? path === url || path === url + "/" : path.startsWith(url));
+  return (
+    <Sidebar collapsible="icon">
+      <SidebarHeader className="px-3 py-4">{collapsed ? <span className="mx-auto font-display text-xl text-primary">P</span> : <Logo sub="Owner Portal" />}</SidebarHeader>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel>Clinic</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {items.map((i) => (
+                <SidebarMenuItem key={i.url}>
+                  <SidebarMenuButton asChild isActive={isActive(i.url, i.exact)} tooltip={i.title}>
+                    <Link to={i.url}><i.icon className="size-4" /><span>{i.title}</span></Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              tooltip="Sign out"
+              onClick={() => {
+                sessionStorage.removeItem("ps-owner");
+                toast.success("Signed out");
+                nav({ to: "/portal/login" });
+              }}
+            >
+              <LogOut className="size-4" /><span>Sign out</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
+    </Sidebar>
+  );
+}
 
 function PortalLayout() {
   const nav = useNavigate();
@@ -16,31 +72,18 @@ function PortalLayout() {
     else nav({ to: "/portal/login" });
   }, [nav]);
   if (!ok) return null;
-  const link = "flex items-center gap-2 border-b-2 border-transparent px-1 pb-1 pt-1 text-sm font-medium text-muted-foreground transition-colors hover:text-primary";
-  const active = { className: "!border-primary !text-primary" };
   return (
-    <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-30 border-b border-primary/10 bg-sidebar backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-3">
-          <Logo sub="Owner Portal" />
-          <nav className="flex items-center gap-1">
-            <Link to="/portal" activeOptions={{ exact: true }} activeProps={active} className={link}><LayoutGrid className="size-4" /><span className="hidden sm:inline">Dashboard</span></Link>
-            <Link to="/portal/calendar" activeProps={active} className={link}><CalendarDays className="size-4" /><span className="hidden sm:inline">Calendar</span></Link>
-            <Link to="/book" target="_blank" className={link}><ExternalLink className="size-4" /><span className="hidden md:inline">Booking page</span></Link>
-            <button
-              className={link}
-              aria-label="Sign out"
-              onClick={() => {
-                sessionStorage.removeItem("ps-owner");
-                nav({ to: "/portal/login" });
-              }}
-            >
-              <LogOut className="size-4" />
-            </button>
-          </nav>
+    <SidebarProvider>
+      <div className="flex min-h-screen w-full bg-background">
+        <PortalSidebar />
+        <div className="flex min-w-0 flex-1 flex-col">
+          <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-primary/10 bg-sidebar/90 px-4 backdrop-blur">
+            <SidebarTrigger />
+            <span className="text-sm font-medium text-muted-foreground">PearlSmile Dental · Owner Portal</span>
+          </header>
+          <Outlet />
         </div>
-      </header>
-      <Outlet />
-    </div>
+      </div>
+    </SidebarProvider>
   );
 }
