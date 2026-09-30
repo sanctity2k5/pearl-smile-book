@@ -258,6 +258,8 @@ export function createAppointment(input: {
   reason?: string;
 }): Appt {
   const s = getService(input.serviceId);
+  if (!input.name.trim() || !input.phone.trim()) throw new Error("Please add your name and phone number.");
+  assertFree(input.start, s.duration);
   const t = Date.now();
   const iso = (o: number) => new Date(t + o * 1000).toISOString();
   const tl: TimelineItem[] = [{ label: "Appointment requested", at: iso(0) }];
@@ -284,8 +286,11 @@ export function createAppointment(input: {
 function patch(id: string, fn: (a: Appt) => Appt) {
   set(state.map((a) => (a.id === id ? fn(a) : a)));
 }
-export const rescheduleAppointment = (id: string, start: Date, by: "patient" | "clinic") =>
-  patch(id, (a) => ({
+export const rescheduleAppointment = (id: string, start: Date, by: "patient" | "clinic") => {
+  const cur = state.find((x) => x.id === id);
+  if (!cur) throw new Error("Appointment not found.");
+  assertFree(start, getService(cur.serviceId).duration, id);
+  return patch(id, (a) => ({
     ...a,
     start: start.toISOString(),
     status: "confirmed",
@@ -295,6 +300,7 @@ export const rescheduleAppointment = (id: string, start: Date, by: "patient" | "
       { label: "Updated confirmation sent · reminder re-scheduled", at: now() },
     ],
   }));
+};
 export const cancelAppointment = (id: string, by: "patient" | "clinic") =>
   patch(id, (a) => ({
     ...a,
