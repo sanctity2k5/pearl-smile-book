@@ -98,6 +98,18 @@ export const fmtShort = (d: Date | string) =>
 export const naira = (n: number) => "₦" + n.toLocaleString("en-NG");
 export const apptEnd = (a: Appt) =>
   new Date(new Date(a.start).getTime() + getService(a.serviceId).duration * 60000);
+export function googleCalendarUrl(a: Appt, serviceTitle: string) {
+  const stamp = (d: Date) => d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+  const params = new URLSearchParams({
+    action: "TEMPLATE",
+    text: `PearlSmile Dental — ${serviceTitle}`,
+    dates: `${stamp(new Date(a.start))}/${stamp(apptEnd(a))}`,
+    details: `Your appointment at PearlSmile Dental, Lagos.\nBooking reference: ${a.id}\nPatient: ${a.name}\nPlease arrive a few minutes early.`,
+    location: CLINIC.address,
+    ctz: "Africa/Lagos",
+  });
+  return `https://calendar.google.com/calendar/render?${params.toString()}`;
+}
 
 /* ---------- seed data ---------- */
 const at = (day: Date, h: number, m = 0) => {
