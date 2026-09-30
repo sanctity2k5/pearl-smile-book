@@ -4,6 +4,7 @@ import { useState } from "react";
 import { SiteHeader, SiteFooter, SlotPicker, StatusPill } from "@/components/pearl";
 import { CLINIC, cancelAppointment, fmtDate, fmtTime, getService, naira, rescheduleAppointment, useAppointment } from "@/lib/clinic";
 import { Missing } from "./booked.$id";
+import { CopyReference } from "@/components/copy-reference";
 
 export const Route = createFileRoute("/manage/$id")({
   ssr: false,
@@ -34,7 +35,7 @@ function Manage() {
   return (
     <div className="flex min-h-screen flex-col"><SiteHeader />
       <main className="mx-auto w-full max-w-3xl flex-1 px-5 py-12">
-        <p className="text-sm text-muted-foreground">Reference {a.id}</p>
+        <p className="flex items-center gap-2 text-sm text-muted-foreground">Reference <CopyReference value={a.id} /></p>
         <h1 className="mt-1 font-display text-4xl md:text-5xl">Your appointment</h1>
 
         {notice && (
