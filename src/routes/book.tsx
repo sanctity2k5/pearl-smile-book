@@ -30,5 +30,28 @@ function Book() {
  {paying !== "idle" && s && time && <div className="fixed inset-0 z-50 grid place-items-center bg-foreground/40 p-4"><div className="w-full max-w-md rounded-lg bg-card p-7 shadow-xl"><div className="flex items-start justify-between"><div><p className="text-xs font-semibold uppercase text-muted-foreground">Demo booking deposit</p><h2 className="mt-2 font-display text-3xl">{naira(CLINIC.deposit)}</h2></div><Button variant="ghost" size="icon" aria-label="Close" disabled={paying === "processing"} onClick={() => setPaying("idle")}><X /></Button></div><p className="mt-2 text-sm text-muted-foreground">{s.name} · {fmtDate(time)}, {fmtTime(time)}</p><div className="mt-6 space-y-3"><input className="field" defaultValue="5399 8312 4410 2076" aria-label="Card number" /><div className="grid grid-cols-2 gap-3"><input className="field" defaultValue="09 / 28" aria-label="Expiry" /><input className="field" defaultValue="•••" aria-label="CVV" /></div></div><Button className="mt-6 w-full" disabled={paying === "processing"} onClick={() => { setPaying("processing"); setTimeout(finish, 1000); }}>{paying === "processing" ? <><Loader2 className="animate-spin" /> Processing…</> : <><CreditCard /> Pay & confirm</>}</Button><p className="mt-3 text-center text-xs text-muted-foreground">Simulated payment — no real card is charged.</p></div></div>}
  </div>;
 }
-function Summary({ s, time }: { s: ReturnType<typeof getService> | null; time: Date | null }) { return <aside className="h-fit rounded-lg border bg-card p-5 shadow-sm"><div className="flex items-center justify-between border-b pb-4"><h2 className="font-semibold">Booking Summary</h2><span className="rounded-md bg-secondary px-2 py-1 text-xs text-primary">Your visit</span></div><div className="mt-4 rounded-md bg-secondary p-4"><p className="text-xs text-muted-foreground">Your private appointment</p><p className="mt-1 font-semibold">PearlSmile Dental</p><p className="text-xs text-muted-foreground">Lagos, Nigeria</p></div><div className="mt-5 space-y-4 text-sm"><div><p className="text-xs text-muted-foreground">Selected service</p><p className="font-semibold">{s?.name ?? "Choose a service"}</p><p className="text-xs text-muted-foreground">{s?.duration ?? "—"} minute visit</p></div><div><p className="text-xs text-muted-foreground">Date & time</p><p className="font-semibold">{time ? `${fmtDate(time)} · ${fmtTime(time)}` : "Choose a time"}</p></div>{s?.deposit && <div className="rounded-md bg-gold-soft p-3 text-xs"><LockKeyhole className="mr-1 inline size-3" />{naira(CLINIC.deposit)} deposit deducted from your final bill.</div>}</div></aside>; }
+function Summary({ s, time }: { s: ReturnType<typeof getService> | null; time: Date | null }) {
+  const total = s ? Number(s.price.replace(/[^\d]/g, "")) : 0;
+  const deposit = s?.deposit ? CLINIC.deposit : 0;
+  return <aside className="h-fit rounded-lg border bg-card p-5 shadow-sm">
+    <div className="flex items-center justify-between gap-3 border-b pb-4">
+      <h2 className="font-semibold">Booking Summary</h2>
+      <span className="shrink-0 rounded-md bg-secondary px-2 py-1 text-xs text-primary">Your visit</span>
+    </div>
+    <div className="space-y-4 py-5 text-sm">
+      <div><p className="text-xs text-muted-foreground">Selected service</p><p className="mt-1 font-semibold">{s?.name ?? "Choose a service"}</p>{s && <p className="mt-0.5 text-xs text-muted-foreground">{s.duration} minute visit</p>}</div>
+      <div><p className="text-xs text-muted-foreground">Date & time</p><p className="mt-1 font-semibold">{time ? `${fmtDate(time)} · ${fmtTime(time)}` : "Choose a time"}</p></div>
+      <div><p className="text-xs text-muted-foreground">Clinic</p><p className="mt-1 font-medium">PearlSmile Dental · Lagos, Nigeria</p></div>
+    </div>
+    <div className="border-t pt-5">
+      <p className="text-xs font-semibold uppercase text-muted-foreground">Total consultation fee</p>
+      <p className="mt-1 font-display text-3xl font-semibold text-primary">{s?.price ?? "—"}</p>
+      {s && <div className="mt-5 space-y-3 border-t pt-4 text-sm">
+        <div className="flex items-baseline justify-between gap-4"><span>Booking deposit due now</span><strong>{naira(deposit)}</strong></div>
+        <div className="flex items-baseline justify-between gap-4 text-muted-foreground"><span>Remaining at your visit</span><span>{naira(Math.max(0, total - deposit))}</span></div>
+        {s.deposit && <p className="rounded-md bg-gold-soft p-3 text-xs leading-5"><LockKeyhole className="mr-1 inline size-3" />The deposit is part of the total fee, not an extra charge. Payment is simulated for this booking.</p>}
+      </div>}
+    </div>
+  </aside>;
+}
 function ActionBar({ s, time, back, next, disabled, label }: { s: ReturnType<typeof getService>; time: Date | null; back: () => void; next: () => void; disabled: boolean; label: string }) { return <div className="mt-5 flex flex-wrap items-center justify-between gap-4 rounded-lg border bg-card p-4 shadow-sm"><div className="flex items-center gap-3"><span className="grid size-10 place-items-center rounded-md bg-primary text-primary-foreground"><CalendarDays className="size-5" /></span><div><p className="text-xs text-muted-foreground">Current selection</p><p className="font-semibold">{s.name} {time && `· ${fmtDate(time)} at ${fmtTime(time)}`}</p></div></div><div className="flex gap-2"><Button variant="secondary" onClick={back}><ArrowLeft /> Back</Button><Button disabled={disabled} onClick={next}>{label} <ArrowRight /></Button></div></div>; }
