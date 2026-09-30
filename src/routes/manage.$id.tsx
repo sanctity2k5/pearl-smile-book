@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { CalendarClock, Check, MapPin, Phone } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import { SiteHeader, SiteFooter, SlotPicker, StatusPill } from "@/components/pearl";
 import { CLINIC, cancelAppointment, fmtDate, fmtTime, getService, naira, rescheduleAppointment, useAppointment } from "@/lib/clinic";
 import { Missing } from "./booked.$id";
@@ -83,7 +84,8 @@ function Manage() {
                 disabled={!time}
                 onClick={() => {
                   if (!time) return;
-                  rescheduleAppointment(a.id, time, "patient");
+                  try { rescheduleAppointment(a.id, time, "patient"); } catch (e) { toast.error((e as Error).message); return; }
+                  toast.success("Appointment rescheduled");
                   setNotice(`Rescheduled to ${fmtDate(time)} at ${fmtTime(time)}. Your deposit carries over and a new reminder is set.`);
                   setMode("view");
                   setTime(null);
@@ -107,7 +109,8 @@ function Manage() {
               <button
                 className="btn-outline !border-destructive/40 !text-destructive"
                 onClick={() => {
-                  cancelAppointment(a.id, "patient");
+                  try { cancelAppointment(a.id, "patient"); } catch (e) { toast.error((e as Error).message); return; }
+                  toast.success("Appointment cancelled");
                   setNotice("Your appointment has been cancelled. The clinic has been notified.");
                   setMode("view");
                 }}

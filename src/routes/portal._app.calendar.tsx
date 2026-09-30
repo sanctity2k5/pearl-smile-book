@@ -29,17 +29,20 @@ const mins = (d: Date) => d.getHours() * 60 + d.getMinutes();
 function CalendarPage() {
   const appts = useAppointments();
   const nav = useNavigate();
-  const [view, setView] = useState<"week" | "day">("week");
+  const [view, setView] = useState<"week" | "day" | "month">("week");
   const [anchor, setAnchor] = useState(() => startOfDay(new Date()));
   const today = startOfDay(new Date());
   const days = view === "week" ? Array.from({ length: 6 }, (_, i) => addDays(weekStart(anchor), i)) : [anchor];
   const step = (n: number) => {
+    if (view === "month") { setAnchor(new Date(anchor.getFullYear(), anchor.getMonth() + n, 1)); return; }
     let d = addDays(anchor, view === "week" ? 7 * n : n);
     if (view === "day" && d.getDay() === 0) d = addDays(d, n);
     setAnchor(d);
   };
   const label =
-    view === "week"
+    view === "month"
+      ? anchor.toLocaleDateString("en-US", { month: "long", year: "numeric" })
+      : view === "week"
       ? `${days[0].toLocaleDateString("en-US", { month: "short", day: "numeric" })} – ${days[5].toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`
       : anchor.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
   const hours = Array.from({ length: CLINIC.closeHour - CLINIC.openHour }, (_, i) => CLINIC.openHour + i);
@@ -53,7 +56,7 @@ function CalendarPage() {
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <div className="flex rounded-full border bg-card p-1">
-            {(["day", "week"] as const).map((v) => (
+            {(["day", "week", "month"] as const).map((v) => (
               <button key={v} onClick={() => { setView(v); if (v === "day" && anchor.getDay() === 0) setAnchor(addDays(anchor, 1)); }} className={cn("rounded-full px-4 py-1.5 text-sm font-medium capitalize", view === v ? "bg-primary text-primary-foreground" : "text-muted-foreground")}>{v}</button>
             ))}
           </div>
@@ -70,6 +73,9 @@ function CalendarPage() {
         <Legend cls="border border-dashed border-primary/40 bg-card" label="Available" />
       </div>
 
+      {view === "month" ? (
+        <MonthGrid anchor={anchor} appts={appts} today={today} onDay={(d) => { setAnchor(d); setView("day"); }} />
+      ) : (
       <div className="card-soft mt-5 overflow-x-auto">
         <div className={cn("grid", view === "week" ? "min-w-[860px]" : "")} style={{ gridTemplateColumns: `64px repeat(${days.length}, 1fr)` }}>
           <div className="border-b" />
@@ -103,6 +109,7 @@ function CalendarPage() {
           })}
         </div>
       </div>
+      )}
     </main>
   );
 }
@@ -140,4 +147,39 @@ function Block({ a, onClick, wide }: { a: Appt; onClick: () => void; wide: boole
 
 function Legend({ cls, label }: { cls: string; label: string }) {
   return <span className="flex items-center gap-1.5"><span className={cn("h-3 w-4 rounded border-l-[3px] border-l-transparent", cls)} />{label}</span>;
+}
+
+function MonthGrid({ anchor, appts, today, onDay }: { anchor: Date; appts: Appt[]; today: Date; onDay: (d: Date) => void }) {
+  const first = new Date(anchor.getFullYear(), anchor.getMonth(), 1);
+  const start = addDays(first, -((first.getDay() + 6) % 7));
+  const cells = Array.from({ length: 42 }, (_, i) => addDays(start, i));
+  return (
+    <div className="card-soft mt-5 overflow-x-auto">
+      <div className="grid min-w-[720px] grid-cols-7">
+        {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
+          <div key={d} className="border-b px-3 py-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">{d}</div>
+        ))}
+        {cells.map((d) => {
+          const list = appts.filter((a) => a.status !== "cancelled" && sameDay(new Date(a.start), d)).sort((a, b) => a.start.localeCompare(b.start));
+          const out = d.getMonth() !== anchor.getMonth();
+          const closed = d.getDay() === 0;
+          const attention = list.some((a) => a.status === "needs_confirmation");
+          return (
+            <button key={d.toISOString()} disabled={closed} onClick={() => onDay(d)} className={cn("flex min-h-28 flex-col gap-1 border-b border-l p-2 text-left transition hover:bg-muted/50 disabled:cursor-default disabled:hover:bg-transparent", out && "opacity-40", sameDay(d, today) && "bg-primary-soft/50")}>
+              <span className={cn("font-display text-lg", sameDay(d, today) && "text-primary")}>{d.getDate()}</span>
+              {closed ? <span className="text-[11px] text-muted-foreground">Closed</span> : (
+                <>
+                  {list.slice(0, 2).map((a) => (
+                    <span key={a.id} className={cn("truncate rounded border-l-[3px] px-1.5 py-0.5 text-[11px]", a.status === "needs_confirmation" ? "border-l-warn bg-warn-soft" : a.serviceId === "emergency" ? "border-l-urgent bg-urgent-soft" : "border-l-primary bg-primary-soft")}>{fmtTime(a.start)} {a.name.split(" ")[0]}</span>
+                  ))}
+                  {list.length > 2 && <span className="text-[11px] font-medium text-muted-foreground">+{list.length - 2} more</span>}
+                  {list.length > 0 && <span className={cn("mt-auto text-[11px] font-semibold", attention ? "text-warn" : "text-primary")}>{list.length} booked{attention ? " · needs attention" : ""}</span>}
+                </>
+              )}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
 }

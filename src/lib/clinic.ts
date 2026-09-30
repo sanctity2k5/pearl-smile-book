@@ -183,27 +183,52 @@ function seed(): Appt[] {
 
 /* ---------- store ---------- */
 const KEY = "pearlsmile-appts-v1";
-let state: Appt[] = seed();
-if (typeof window !== "undefined") {
+/** Online bookings made by patients carry a "PS-" reference. */
+export const isOnlineBooking = (a: Appt) => a.id.startsWith("PS-");
+export const bookedAt = (a: Appt) => a.timeline[0]?.at ?? a.start;
+
+function load(): Appt[] {
+  const base = seed();
+  if (typeof window === "undefined") return base;
   try {
     const raw = localStorage.getItem(KEY);
-    if (raw) {
-      const p = JSON.parse(raw);
-      if (p.day === startOfDay(new Date()).toISOString()) state = p.items;
-    }
+    if (!raw) return base;
+    const p = JSON.parse(raw) as { day: string; items: Appt[] };
+    if (p.day === startOfDay(new Date()).toISOString()) return p.items;
+    // New day: fresh demo schedule, but keep every patient booking made online.
+    return [...base, ...p.items.filter(isOnlineBooking)];
   } catch {
-    /* ignore */
+    return base;
   }
 }
+let state: Appt[] = load();
 const listeners = new Set<() => void>();
+function persist() {
+  localStorage.setItem(KEY, JSON.stringify({ day: startOfDay(new Date()).toISOString(), items: state }));
+}
 function set(next: Appt[]) {
+  const prev = state;
   state = next;
   try {
-    localStorage.setItem(KEY, JSON.stringify({ day: startOfDay(new Date()).toISOString(), items: state }));
+    persist();
+  } catch {
+    state = prev;
+    throw new Error("Couldn't save to this browser's storage. Please try again.");
+  }
+  listeners.forEach((l) => l());
+}
+if (typeof window !== "undefined") {
+  try {
+    persist();
   } catch {
     /* ignore */
   }
-  listeners.forEach((l) => l());
+  // Keep portal and booking tabs in sync.
+  window.addEventListener("storage", (e) => {
+    if (e.key !== KEY) return;
+    state = load();
+    listeners.forEach((l) => l());
+  });
 }
 const subscribe = (l: () => void) => {
   listeners.add(l);
@@ -211,6 +236,16 @@ const subscribe = (l: () => void) => {
 };
 export const useAppointments = () => useSyncExternalStore(subscribe, () => state, () => state);
 export const useAppointment = (id: string) => useAppointments().find((a) => a.id === id);
+
+function assertFree(start: Date, duration: number, excludeId?: string) {
+  const s = start.getTime();
+  const e = s + duration * 60000;
+  const clash = state.some(
+    (a) => a.status !== "cancelled" && a.id !== excludeId && s < apptEnd(a).getTime() && e > new Date(a.start).getTime(),
+  );
+  if (clash) throw new Error("Sorry, that time was just taken. Please pick another slot.");
+}
+
 
 const now = () => new Date().toISOString();
 
@@ -223,6 +258,8 @@ export function createAppointment(input: {
   reason?: string;
 }): Appt {
   const s = getService(input.serviceId);
+  if (!input.name.trim() || !input.phone.trim()) throw new Error("Please add your name and phone number.");
+  assertFree(input.start, s.duration);
   const t = Date.now();
   const iso = (o: number) => new Date(t + o * 1000).toISOString();
   const tl: TimelineItem[] = [{ label: "Appointment requested", at: iso(0) }];
@@ -249,8 +286,11 @@ export function createAppointment(input: {
 function patch(id: string, fn: (a: Appt) => Appt) {
   set(state.map((a) => (a.id === id ? fn(a) : a)));
 }
-export const rescheduleAppointment = (id: string, start: Date, by: "patient" | "clinic") =>
-  patch(id, (a) => ({
+export const rescheduleAppointment = (id: string, start: Date, by: "patient" | "clinic") => {
+  const cur = state.find((x) => x.id === id);
+  if (!cur) throw new Error("Appointment not found.");
+  assertFree(start, getService(cur.serviceId).duration, id);
+  return patch(id, (a) => ({
     ...a,
     start: start.toISOString(),
     status: "confirmed",
@@ -260,6 +300,7 @@ export const rescheduleAppointment = (id: string, start: Date, by: "patient" | "
       { label: "Updated confirmation sent · reminder re-scheduled", at: now() },
     ],
   }));
+};
 export const cancelAppointment = (id: string, by: "patient" | "clinic") =>
   patch(id, (a) => ({
     ...a,

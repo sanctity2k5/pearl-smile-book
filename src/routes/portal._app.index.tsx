@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AlertCircle, BellRing, Check, ChevronRight, Sparkles } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import { StatusPill } from "@/components/pearl";
-import { CLINIC, fmtTime, getService, markConfirmed, naira, sameDay, sendReminder, useAppointments } from "@/lib/clinic";
+import { CLINIC, bookedAt, fmtDate, isOnlineBooking, fmtTime, getService, markConfirmed, naira, sameDay, sendReminder, useAppointments } from "@/lib/clinic";
 
 export const Route = createFileRoute("/portal/_app/")({
   head: () => ({
@@ -33,6 +34,8 @@ function Dashboard() {
     const t = new Date(a.start).getTime() - now.getTime();
     return a.status === "confirmed" && t > 0 && t < 48 * 3600000;
   }).length;
+  const online = appts.filter(isOnlineBooking).sort((a, b) => bookedAt(b).localeCompare(bookedAt(a)));
+  const run = (fn: () => void, ok: string) => { try { fn(); toast.success(ok); } catch (e) { toast.error((e as Error).message); } };
   const h = now.getHours();
   const greet = h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening";
 
@@ -76,6 +79,27 @@ function Dashboard() {
         </section>
 
         <div className="space-y-6">
+          <section className="card-soft p-6">
+            <div className="flex items-center justify-between">
+              <h2 className="font-display text-2xl">New online bookings</h2>
+              <Link to="/portal/bookings" className="text-sm font-semibold text-primary">View all →</Link>
+            </div>
+            {online.length === 0 ? (
+              <p className="mt-4 text-sm text-muted-foreground">No new bookings yet — they'll appear here the moment a patient books.</p>
+            ) : (
+              <ul className="mt-3 divide-y">
+                {online.slice(0, 5).map((a) => (
+                  <li key={a.id}>
+                    <Link to="/portal/appointments/$id" params={{ id: a.id }} className="-mx-2 block rounded-md px-2 py-3 hover:bg-muted/60">
+                      <span className="flex justify-between gap-2"><span className="truncate font-medium">{a.name}</span><StatusPill status={a.status} emergency={a.serviceId === "emergency"} /></span>
+                      <span className="block text-sm text-muted-foreground">{getService(a.serviceId).name} · {fmtDate(a.start)}, {fmtTime(a.start)}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+
           <section className="card-soft border-warn/30 p-6">
             <h2 className="flex items-center gap-2 font-display text-2xl"><AlertCircle className="size-5 text-warn" /> Needs Attention</h2>
             {attention.length === 0 ? (
@@ -91,11 +115,11 @@ function Dashboard() {
                       {sent[a.id] ? (
                         <span className="inline-flex items-center gap-1.5 rounded-md bg-card px-3 py-2 text-sm font-medium text-primary"><Check className="size-4" /> Reminder sent</span>
                       ) : (
-                        <button className="btn-primary !px-4 !py-2 text-sm" onClick={() => { sendReminder(a.id); setSent({ ...sent, [a.id]: true }); }}>
+                        <button className="btn-primary !px-4 !py-2 text-sm" onClick={() => run(() => { sendReminder(a.id); setSent({ ...sent, [a.id]: true }); }, `Reminder sent to ${a.name}`)}>
                           <BellRing className="size-4" /> Send Reminder
                         </button>
                       )}
-                      <button className="btn-outline !px-4 !py-2 text-sm" onClick={() => markConfirmed(a.id)}>Mark confirmed</button>
+                      <button className="btn-outline !px-4 !py-2 text-sm" onClick={() => run(() => markConfirmed(a.id), `${a.name} marked as confirmed`)}>Mark confirmed</button>
                     </div>
                   </li>
                 ))}
