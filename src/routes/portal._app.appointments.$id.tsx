@@ -25,8 +25,16 @@ export const Route = createFileRoute("/portal/_app/appointments/$id")({
 function Detail() {
   const { id } = Route.useParams();
   const a = useAppointment(id);
-  const [mode, setMode] = useState<"view" | "reschedule" | "cancel">("view");
+  const [mode, setMode] = useState<"view" | "reschedule">("view");
+  const [showCancel, setShowCancel] = useState(false);
   const [time, setTime] = useState<Date | null>(null);
+  useEffect(() => {
+    if (!showCancel) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setShowCancel(false); };
+    window.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = ""; };
+  }, [showCancel]);
   if (!a) return <main className="mx-auto max-w-4xl px-5 py-16 text-center text-muted-foreground">Appointment not found.</main>;
   const s = getService(a.serviceId);
   const cancelled = a.status === "cancelled";
