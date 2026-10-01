@@ -27,7 +27,7 @@ function PortalSidebar() {
   const isActive = (url: string, exact: boolean) => (exact ? path === url || path === url + "/" : path.startsWith(url));
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader className="px-3 py-4">{collapsed ? <span className="mx-auto font-display text-xl text-primary">P</span> : <Logo sub="Owner Portal" />}</SidebarHeader>
+      <SidebarHeader className="px-3 py-4">{collapsed ? <span className="mx-auto font-display text-xl text-sidebar-foreground">P</span> : <span className="rounded-lg bg-card px-3 py-1.5 shadow-sm"><Logo sub="Owner Portal" /></span>}</SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Clinic</SidebarGroupLabel>
@@ -77,9 +77,9 @@ function PortalLayout() {
       <div className="flex min-h-screen w-full bg-background">
         <PortalSidebar />
         <div className="flex min-w-0 flex-1 flex-col">
-          <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-primary/10 bg-sidebar/90 px-4 backdrop-blur">
+          <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-sidebar-border bg-sidebar/95 px-4 text-sidebar-foreground backdrop-blur">
             <SidebarTrigger />
-            <span className="text-sm font-medium text-muted-foreground">PearlSmile Dental · Owner Portal</span>
+            <span className="text-sm font-medium text-sidebar-foreground/80">PearlSmile Dental · Owner Portal</span>
           </header>
           <Outlet />
         </div>
