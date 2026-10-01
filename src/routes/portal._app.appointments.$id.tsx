@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, BellRing, CalendarClock, Mail, Phone, User, X } from "lucide-react";
-import { useState } from "react";
+import { ArrowLeft, BellRing, CalendarClock, Mail, Phone, TriangleAlert, User, X } from "lucide-react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { SlotPicker, StatusPill, Timeline } from "@/components/pearl";
 import {
