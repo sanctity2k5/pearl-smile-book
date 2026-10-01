@@ -56,7 +56,7 @@ function Detail() {
         {!cancelled && (
           <div className="flex flex-wrap gap-2">
             <button className="btn-outline" onClick={() => setMode("reschedule")}><CalendarClock className="size-4" /> Reschedule</button>
-            <button className="btn-outline" onClick={() => setMode("cancel")}><X className="size-4" /> Cancel</button>
+            <button className="btn-outline" onClick={() => setShowCancel(true)}><X className="size-4" /> Cancel</button>
             <button className="btn-primary" onClick={() => flash("Reminder sent successfully.", () => sendReminder(a.id))}><BellRing className="size-4" /> Send Reminder</button>
           </div>
         )}
