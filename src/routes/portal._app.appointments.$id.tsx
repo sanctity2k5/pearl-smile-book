@@ -99,6 +99,16 @@ function Detail() {
       )}
 
       {mode === "reschedule" && (
+        <section className="card-soft mt-6 p-6">
+          <h2 className="mb-5 font-display text-2xl">Move to a new time</h2>
+          <SlotPicker duration={s.duration} value={time} onChange={setTime} excludeId={a.id} />
+          <div className="mt-6 flex gap-3">
+            <button className="btn-primary" disabled={!time} onClick={() => { if (!time) return; if (flash("Rescheduled — patient notified.", () => rescheduleAppointment(a.id, time, "clinic"))) { setMode("view"); setTime(null); } }}>Confirm new time</button>
+            <button className="btn-outline" onClick={() => setMode("view")}>Close</button>
+          </div>
+        </section>
+      )}
+
 
       <div className="mt-8 grid gap-6 md:grid-cols-[1fr_1.1fr]">
         <div className="space-y-6">
