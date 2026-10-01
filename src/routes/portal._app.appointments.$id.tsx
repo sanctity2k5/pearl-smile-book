@@ -62,25 +62,43 @@ function Detail() {
         )}
       </div>
 
+      {showCancel && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/40 p-4 backdrop-blur-sm"
+          role="dialog" aria-modal="true" aria-labelledby="cancel-title"
+          onClick={() => setShowCancel(false)}
+        >
+          <div
+            className="card-soft w-full max-w-md p-7 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-destructive/10">
+                <TriangleAlert className="size-6 text-destructive" />
+              </div>
+              <button className="text-muted-foreground hover:text-foreground" aria-label="Close" onClick={() => setShowCancel(false)}>
+                <X className="size-5" />
+              </button>
+            </div>
+            <h2 id="cancel-title" className="mt-4 font-display text-2xl">Cancel this appointment?</h2>
+            <p className="mt-2 text-muted-foreground">
+              {a.name}'s appointment on {fmtDate(a.start)} at {fmtTime(a.start)} will be cancelled and the patient will be notified
+              {a.deposit === "paid" ? ". The deposit will be credited back." : "."}
+            </p>
+            <div className="mt-6 flex justify-end gap-3">
+              <button className="btn-outline" onClick={() => setShowCancel(false)}>Keep appointment</button>
+              <button
+                className="btn-primary !bg-destructive"
+                onClick={() => { flash("Appointment cancelled.", () => cancelAppointment(a.id, "clinic")); setShowCancel(false); }}
+              >
+                Yes, cancel it
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {mode === "reschedule" && (
-        <section className="card-soft mt-6 p-6">
-          <h2 className="mb-5 font-display text-2xl">Move to a new time</h2>
-          <SlotPicker duration={s.duration} value={time} onChange={setTime} excludeId={a.id} />
-          <div className="mt-6 flex gap-3">
-            <button className="btn-primary" disabled={!time} onClick={() => { if (!time) return; if (flash("Rescheduled — patient notified.", () => rescheduleAppointment(a.id, time, "clinic"))) { setMode("view"); setTime(null); } }}>Confirm new time</button>
-            <button className="btn-outline" onClick={() => setMode("view")}>Close</button>
-          </div>
-        </section>
-      )}
-      {mode === "cancel" && (
-        <section className="card-soft mt-6 flex flex-wrap items-center justify-between gap-4 p-6">
-          <p>Cancel this appointment? The patient will be notified{a.deposit === "paid" ? " and the deposit credited back" : ""}.</p>
-          <div className="flex gap-2">
-            <button className="btn-outline" onClick={() => setMode("view")}>Keep</button>
-            <button className="btn-primary !bg-destructive" onClick={() => { flash("Appointment cancelled.", () => cancelAppointment(a.id, "clinic")); setMode("view"); }}>Cancel appointment</button>
-          </div>
-        </section>
-      )}
 
       <div className="mt-8 grid gap-6 md:grid-cols-[1fr_1.1fr]">
         <div className="space-y-6">
